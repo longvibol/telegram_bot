@@ -1,16 +1,20 @@
-# This is a sample Python script.
+import telebot
+import logging
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# (Optional) helps show what's happening in the console
+logging.basicConfig(level=logging.INFO)
 
+BOT_TOKEN = "8338627964:AAE5OBrqHfERvlqd-lv2dXFe_TAb_eOBiNc"
+bot = telebot.TeleBot(BOT_TOKEN)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@bot.message_handler(commands=["start", "hello"])
+def send_welcome(message):
 
+    user_name = message.from_user.first_name
+    user_id = message.from_user.id
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    # bot.reply_to(message, "Hello, " + user_name + "!\nYour ID is: " + str(user_id))
+    bot.send_chat_action(user_id, 'typing')
+    bot.send_message(user_id, "Hello, " + user_name + "!\nYour ID is: " + str(user_id))
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+bot.infinity_polling()

@@ -1,0 +1,15 @@
+1- install pyTelegram Bot
+
+Link : https://pypi.org/project/pyTelegramBotAPI/
+
+>> pip install pyTelegramBotAPI
+
+
+
+
+
+2- To keep it running all the time 
+
+
+
+3- Message Handler (responde to the telegram) 
