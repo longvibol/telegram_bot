@@ -13,7 +13,7 @@ def send_welcome(message):
     user_name = message.from_user.first_name
     user_id = message.from_user.id
 
-    bot.send_message(user_id, "send from main.py")
+    bot.send_photo(user_id, open('1.jpg','rb'), caption="this bot photo")
 
-
+print("Bot running...")
 bot.infinity_polling()

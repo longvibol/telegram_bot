@@ -1,3 +1,5 @@
+import json
+
 import telebot
 import logging
 
@@ -13,7 +15,13 @@ def send_welcome(message):
     user_name = message.from_user.first_name
     user_id = message.from_user.id
 
-    bot.send_message(user_id, "send from main.py")
+    # bot.reply_to(message, "Hello, " + user_name + "!\nYour ID is: " + str(user_id))
+    # bot.send_chat_action(user_id, 'typing')
+    # bot.send_message(user_id, "Hello, " + user_name + "!\nYour ID is: " + str(user_id))
+
+    msg_object = json.dumps(message.json, indent=2)
+
+    bot.send_message(user_id, msg_object)
 
 
 bot.infinity_polling()

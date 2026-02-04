@@ -1,0 +1,18 @@
+1- Auto reply : in the bot : they can reply anything then it will reply 
+
+@bot.message_handler(func=lambda message: True)
+
+Example:
+
+>> hello 
+
+
+long vibol, [2/3/2026 3:56 PM]
+hello
+
+SunWish, [2/3/2026 3:56 PM]
+Hello, long!
+Your ID is: 211259472
+
+ដាក់អីក៏ដោយវា នឹង Triger ទាំងអស់
+
