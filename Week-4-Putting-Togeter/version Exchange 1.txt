@@ -1,0 +1,99 @@
+import requests
+import telebot
+from mytoken import TelegramConfig
+
+API_BASE_URL = "https://v6.exchangerate-api.com/v6"
+REQUEST_TIMEOUT_SEC = 10
+
+bot = telebot.TeleBot(TelegramConfig().get_token())
+TOKEN = TelegramConfig().get_exchange_rate_token()
+_session = requests.Session()
+
+
+def convert_current(amount, from_currency, to_currency):
+    url = f"{API_BASE_URL}/{TOKEN}/latest/{from_currency}"
+    response = _session.get(url, timeout=REQUEST_TIMEOUT_SEC)
+    response.raise_for_status()
+    data = response.json()
+
+    if data.get("result") != "success":
+        raise ValueError(data.get("error-type", "unknown API error"))
+
+    rates = data.get("conversion_rates", {})
+    if to_currency not in rates:
+        raise ValueError(f"unknown currency: {to_currency}")
+
+    converted_rate = rates[to_currency]
+    return amount * converted_rate
+
+
+def _parse_message_text(text):
+    parts = text.split()
+    if len(parts) != 3:
+        raise ValueError("Expected: <amount> <from_currency> <to_currency>")
+
+    amount_str, from_currency, to_currency = parts
+    amount = float(amount_str)
+    if amount <= 0:
+        raise ValueError("Amount must be positive.")
+
+    return amount, from_currency.upper(), to_currency.upper()
+
+
+@bot.message_handler(commands=["start", "help"])
+def send_welcome(message):
+    bot.send_message(
+        message.chat.id,
+        "Hello! To convert currencies, send a message in the format:\n"
+        "<amount> <from_currency> <to_currency>\n"
+        "Example: 100 USD EUR",
+    )
+
+
+@bot.message_handler(func=lambda m: True, content_types=["text"])
+def process_conversion(message):
+    try:
+        amount, from_currency, to_currency = _parse_message_text(message.text)
+        result = convert_current(amount, from_currency, to_currency)
+    except (ValueError, requests.RequestException) as exc:
+        bot.reply_to(message, f"Error: {exc}")
+        return
+
+    bot.reply_to(
+        message,
+        f"{amount:.2f} {from_currency} is approximately {result:.2f} {to_currency}",
+    )
+
+
+def main():
+    print("Bot running...")
+    bot.infinity_polling(skip_pending=True)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+======================
+
+
+mytokent.py 
+
+
+class TelegramConfig:
+    def __init__(self):
+        self._bot_token = "8338627964:AAE5OBrqHfERvlqd-lv2dXFe_TAb_eOBiNc"
+        self._exchange_rate_token = "ea624cd9cb8959181c27c91d"
+
+    def get_token(self) -> str:
+        return self._bot_token
+
+    def get_exchange_rate_token(self) -> str:
+        return self._exchange_rate_token
+
+
+if __name__ == "__main__":
+    config = TelegramConfig()
+    print(config.get_token())
+
